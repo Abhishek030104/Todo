@@ -30,24 +30,16 @@ function App() {
   }
 
   useEffect(() => {
-    const data = localStorage.getItem('todos')
+    const data = JSON.parse(localStorage.getItem('todos'))
     if (data && data.length > 0) {
-      setTodos(JSON.parse(data))
+      setTodos(data)
     }
   }, [])
+
   useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      event.preventDefault()
-      localStorage.setItem('todos', JSON.stringify(todos))
-      event.returnValue = '' // Prompt will not be shown in modern browsers
-    }
-
-    window.addEventListener('beforeunload', handleBeforeUnload)
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-    }
+    localStorage.setItem('todos', JSON.stringify(todos))
   }, [todos])
+
   return (
     <TodoProvider
       value={{ todos, addTodo, updateTodo, deleteTodo, toglecomplete }}
@@ -60,7 +52,7 @@ function App() {
           </div>
           <div className="flex flex-wrap gap-y-3">
             {todos.map((todo) => (
-              <div id={todo.id} className="w-full">
+              <div key={todo.id} className="w-full">
                 <TodoItem todo={todo} />
               </div>
             ))}
